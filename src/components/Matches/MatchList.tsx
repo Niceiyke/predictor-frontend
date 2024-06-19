@@ -3,38 +3,20 @@ import { useParams } from 'react-router-dom';
 import debounce from 'lodash.debounce';
 import { useAuth } from '../../context/AuthContext';
 
-interface League {
-  name: string;
-  id: number;
-  premium: boolean;
-}
 
-interface Match {
-  id: number;
-  home_team: string;
-  away_team: string;
-  match_date: string;
-  league: League;
-  home_team_ft_score: number | null;
-  away_team_ft_score: number | null;
-}
-
-interface Prediction {
-  fixture_id: number;
-  home_prediction_score: number | null;
-  away_prediction_score: number | null;
-}
 
 const MatchList: React.FC = () => {
   const { token } = useAuth(); 
   const { leagueId } = useParams<{ leagueId: string }>();
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [predictions, setPredictions] = useState<Record<number, Prediction>>({});
+  const [matches, setMatches] = useState<Fixture[]>([]);
+  const [predictions, setPredictions] = useState<Record<string, Prediction>>({});
+  const [league,setLeague]=useState(1)
 
   useEffect(() => {
     const fetchMatches = async () => {
+      if(leagueId !=undefined){setLeague(leagueId)}
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/fixtures/not-predicted/?league_id=${leagueId}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/fixtures/user/not-predicted?league_id=${league}`, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${JSON.parse(token)}`
@@ -46,7 +28,7 @@ const MatchList: React.FC = () => {
         if (!response.ok) {
           throw new Error('Failed to fetch matches');
         }
-        const data: Match[] = await response.json();
+        const data: Fixture[] = await response.json();
         setMatches(data);
       } catch (error) {
         console.error('Error fetching matches:', error);
@@ -71,14 +53,14 @@ const MatchList: React.FC = () => {
         throw new Error('Failed to post prediction');
       }
       // Remove the match from the list after a successful prediction
-      setMatches((prevMatches) => prevMatches.filter(match => match.id !== prediction.fixture_id));
+      setMatches((prevMatches) => prevMatches.filter(match => match.id !== prediction.id));
     } catch (error) {
       console.error('Error posting prediction:', error);
       // Handle error (e.g., show error message to user)
     }
   };
 
-  const handlePredictionChange = debounce((fixtureId: number, homeScore: number | null, awayScore: number | null) => {
+  const handlePredictionChange = debounce((fixtureId: number, homeScore: string | null, awayScore: string | null) => {
     // Validate that both scores are selected
     if (homeScore === null || awayScore === null) return;
 
@@ -91,7 +73,7 @@ const MatchList: React.FC = () => {
   }, 600);
 
   const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>, fixtureId: number, type: 'home' | 'away') => {
-    const value = e.target.value === "" ? null : parseInt(e.target.value);
+    const value = e.target.value === "" ? null : e.target.value;
 
     const currentPrediction = predictions[fixtureId] || { fixture_id: fixtureId, home_prediction_score: null, away_prediction_score: null };
     const updatedPrediction = type === 'home'
