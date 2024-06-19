@@ -45,7 +45,7 @@ const PredictionList: React.FC = () => {
     const fetchPredictions = async () => {
       const user_id = (jwtDecode(token) as { id: number }).id;
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/predictions/fixtures/league/${leagueId}?user_id=${user_id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/predictions/user?user_id=${user_id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
