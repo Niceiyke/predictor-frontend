@@ -15,8 +15,7 @@ axiosInstance.interceptors.request.use(
         // Modify the req
         config.headers.Authorization=headers.Authorization
         config.headers['Content-Type']=headers['Content-Type']
-        
-
+               
         return config;
       },
       (error) => {

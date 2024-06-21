@@ -24,6 +24,7 @@ interface Fixture {
   league: League;
   home_team_ft_score: number | null;
   away_team_ft_score: number | null;
+  match_week: number;
 }
 
 interface Prediction {
@@ -58,12 +59,26 @@ const PredictionList: React.FC = () => {
         setLoading(false);
       } catch (error) {
         console.error('Error fetching matches:', error);
-
+        setError('Failed to fetch predictions');
+        setLoading(false);
       }
     };
 
     fetchPredictions();
   }, [token, leagueId]);
+
+  const groupedPredictions = predictions.reduce((acc: any, prediction) => {
+    const week = prediction.fixture.match_week;
+    const league = prediction.fixture.league.name;
+    if (!acc[week]) {
+      acc[week] = {};
+    }
+    if (!acc[week][league]) {
+      acc[week][league] = [];
+    }
+    acc[week][league].push(prediction);
+    return acc;
+  }, {});
 
   if (loading) {
     return <div className="text-center text-gray-500">Loading...</div>;
@@ -74,22 +89,32 @@ const PredictionList: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto w-2/4 p-4">
-      {predictions.length === 0 ? (
+    <div className="container mx-auto w-full sm:w-3/4 md:w-2/3 lg:w-1/2 p-4">
+      {Object.keys(groupedPredictions).length === 0 ? (
         <div className="text-center text-gray-500">No predictions available</div>
       ) : (
-        predictions.map(prediction => (
-          <div key={prediction.id} className="mb-4 p-4 border rounded-lg shadow-md bg-white">
-            <div className="font-bold text-lg mb-2">
-              {prediction.fixture.home_team} vs {prediction.fixture.away_team}
-            </div>
-            <div className="text-gray-700">
-              <div className="mb-1"><span className="font-medium">Match Date:</span> {new Date(prediction.fixture.match_date).toLocaleString()}</div>
-              <div className="mb-1"><span className="font-medium">League:</span> {prediction.fixture.league.name}</div>
-              <div className="mb-1"><span className="font-medium">Full Time Score:</span> {prediction.fixture.home_team_ft_score} - {prediction.fixture.away_team_ft_score}</div>
-              <div className="mb-1"><span className="font-medium">Prediction:</span> {prediction.home_prediction_score} - {prediction.away_prediction_score}</div>
-              <div className="mb-1"><span className="font-medium">User:</span> {prediction.user.username}</div>
-            </div>
+        Object.keys(groupedPredictions).map(week => (
+          <div key={week}>
+            <h2 className="text-xl font-bold mb-4">Match Week {week}</h2>
+            {Object.keys(groupedPredictions[week]).map(league => (
+              <div key={league} className="mb-6">
+                <h3 className="text-lg font-semibold mb-2">{league}</h3>
+                {groupedPredictions[week][league].map((prediction: Prediction) => (
+                  <div key={prediction.id} className="mb-4 p-4 border rounded-lg shadow-md bg-white">
+                    <div className="items-center text-gray-700 mb-2">
+                      <div className="justify-between">
+                        <div className="text-xl font-medium">
+                          {prediction.fixture.home_team} {prediction.fixture.home_team_ft_score !== null ? prediction.fixture.home_team_ft_score : 'N/A'} - {prediction.fixture.away_team_ft_score !== null ? prediction.fixture.away_team_ft_score : 'N/A'} {prediction.fixture.away_team}
+                        </div>
+                        <div className="text-xl">
+                        {prediction.home_prediction_score} - {prediction.away_prediction_score}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
         ))
       )}
