@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { axiosInstance } from '../../config/https';
 
 interface SidebarProps{
     url:string
+    id:string
 }
 
 const Sidebar: React.FC<SidebarProps> = ({url}) => {
@@ -11,13 +13,13 @@ const Sidebar: React.FC<SidebarProps> = ({url}) => {
     useEffect(() => {
         const getLeagues = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/leagues`);
+                const response = await axiosInstance.get(`/leagues`);
 
-                if (!response.ok) {
+                if (response.status!=200) {
                     throw new Error('Failed to fetch leagues');
                 }
                 
-                const data = await response.json();
+                const data = await response.data;
                 setLeagues(data);
             } catch (error) {
                 console.error('Error fetching leagues:', error);

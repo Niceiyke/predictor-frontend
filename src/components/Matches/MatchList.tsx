@@ -2,34 +2,28 @@ import React, { useEffect, useState, ChangeEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import debounce from 'lodash.debounce';
 import { useAuth } from '../../context/AuthContext';
-
-
+import { axiosInstance } from '../../../config/https';
 
 const MatchList: React.FC = () => {
   const { token } = useAuth(); 
   const { leagueId } = useParams<{ leagueId: string }>();
   const [matches, setMatches] = useState<Fixture[]>([]);
   const [predictions, setPredictions] = useState<Record<string, Prediction>>({});
-  const [league,setLeague]=useState(1)
+
 
   useEffect(() => {
     const fetchMatches = async () => {
-      if(leagueId !=undefined){setLeague(leagueId)}
+
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/fixtures/user/not-predicted?league_id=${league}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${JSON.parse(token)}`
-          }
-        });
+        const response = await axiosInstance.get(`/fixtures/user/not-predicted?league_id=${leagueId}`);
         if (response.status === 404) {
-          setMatches([]);
+          console.log(response.data);
         }
-        if (!response.ok) {
-          throw new Error('Failed to fetch matches');
+
+        if (response.status === 200) {
+          const data: Fixture[] = await response.data;
+          setMatches(data);
         }
-        const data: Fixture[] = await response.json();
-        setMatches(data);
       } catch (error) {
         console.error('Error fetching matches:', error);
         // Handle error (e.g., show error message to user)
@@ -41,19 +35,12 @@ const MatchList: React.FC = () => {
 
   const postPrediction = async (prediction: Prediction) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/predictions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${JSON.parse(token)}`
-        },
-        body: JSON.stringify(prediction),
-      });
-      if (!response.ok) {
+      const response = await axiosInstance.post(`/predictions`, prediction);
+      if (response.status === 401) {
         throw new Error('Failed to post prediction');
       }
       // Remove the match from the list after a successful prediction
-      setMatches((prevMatches) => prevMatches.filter(match => match.id !== prediction.id));
+      setMatches((prevMatches) => prevMatches.filter(match => match.id !== prediction.fixture_id));
     } catch (error) {
       console.error('Error posting prediction:', error);
       // Handle error (e.g., show error message to user)
@@ -101,14 +88,13 @@ const MatchList: React.FC = () => {
         matches.map((match) => (
           <div key={match.id} className="border p-4 mb-4 rounded-lg shadow-md bg-white">
             <div className="flex justify-between items-center text-sm text-gray-500">
-            <span>{match.league.name}</span>
+              <span>{match.league.name}</span>
               <span>{new Date(match.match_date).toLocaleString()}</span>
-              
             </div>
             <div className="mt-2 flex justify-between items-center">
               <span className="font-bold">{match.home_team}</span>
               <span className="text-gray-500">vs</span>
-              <span className="font-bold ">{match.away_team}</span>
+              <span className="font-bold">{match.away_team}</span>
             </div>
             <div className="mt-2 text-center">
               {match.home_team_ft_score !== null && match.away_team_ft_score !== null ? (
@@ -123,8 +109,8 @@ const MatchList: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700">Home Score</label>
                 <select
-                  title='homescore'
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  title="homescore"
+                  className="mt-1 block w-full h-10 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   onChange={(e) => handleSelectChange(e, match.id, 'home')}
                 >
                   <option value="">Select</option>
@@ -136,8 +122,8 @@ const MatchList: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700">Away Score</label>
                 <select
-                  title='awayscorea'
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  title="awayscorea"
+                  className="mt-1 block w-full h-10 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   onChange={(e) => handleSelectChange(e, match.id, 'away')}
                 >
                   <option value="">Select</option>
