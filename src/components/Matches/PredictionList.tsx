@@ -123,7 +123,7 @@ const PredictionList: React.FC = () => {
   const sortedWeeks = Object.keys(groupedPredictions).sort((a, b) => parseInt(b) - parseInt(a));
 
   return (
-    <div className="container mx-auto w-full sm:w-3/4 md:w-2/3 lg:w-1/2 p-4">
+    <div className="container mx-auto w-full sm:w-full md:w-2/3 lg:w-2/3 p-4">
       {sortedWeeks.length === 0 ? (
         <div className="text-center text-gray-500">No predictions available</div>
       ) : (

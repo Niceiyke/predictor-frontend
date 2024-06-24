@@ -29,7 +29,7 @@ const Adbar: React.FC<AdbarProps> = ({url}) => {
     }, []);
 
     return (
-        <div className="bg-gray-200 h-screen w-1/4 p-4">
+        <div className="bg-gray-200 h-screen w-1/6 p-4">
             <h2 className="text-lg font-semibold mb-4">Leagues</h2>
             <ul>
                 {leagues.map((league:League) => (

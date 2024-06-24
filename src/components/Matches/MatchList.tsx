@@ -81,7 +81,7 @@ const MatchList: React.FC = () => {
   const scoreOptions = Array.from({ length: 13 }, (_, i) => i);
   
   return (
-    <div className="container mx-auto w-2/4 p-4">
+    <div className="container mx-auto w-4/6 p-4">
       {matches.length === 0 ? (
         <div className="text-center text-gray-500">No matches available</div>
       ) : (
@@ -96,21 +96,13 @@ const MatchList: React.FC = () => {
               <span className="text-gray-500">vs</span>
               <span className="font-bold">{match.away_team}</span>
             </div>
-            <div className="mt-2 text-center">
-              {match.home_team_ft_score !== null && match.away_team_ft_score !== null ? (
-                <div className="text-lg">
-                  <span className="font-bold">{match.home_team_ft_score}</span> - <span className="font-bold">{match.away_team_ft_score}</span>
-                </div>
-              ) : (
-                <div className="text-gray-500">Score not available</div>
-              )}
-            </div>
-            <div className="mt-2 grid grid-cols-2 gap-4">
+
+            <div className="mt-2 flex justify-around">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Home Score</label>
                 <select
                   title="homescore"
-                  className="mt-1 block w-full h-10 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full h-10 rounded-md text-white text-center bg-gray-700 border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   onChange={(e) => handleSelectChange(e, match.id, 'home')}
                 >
                   <option value="">Select</option>
@@ -123,7 +115,7 @@ const MatchList: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700">Away Score</label>
                 <select
                   title="awayscorea"
-                  className="mt-1 block w-full h-10 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full h-10 rounded-md text-white text-center bg-gray-700 border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   onChange={(e) => handleSelectChange(e, match.id, 'away')}
                 >
                   <option value="">Select</option>
