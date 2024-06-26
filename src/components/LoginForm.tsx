@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logo from "../assets/logo/llogo1.png"
 
 interface LoginFormProps {
   onLogin: (username: string, password: string) => void;
@@ -14,11 +15,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Login</h2>
+    <div className="h-[85vh] p-6 bg-background rounded-lg shadow-md">
+
+      <div className='w-full mx-auto'>
+      <img src={logo}/>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="username" className="block text-gray-700">Username</label>
+          <label htmlFor="username" className="block text-gray-100 px-2">Username</label>
           <input
             id="username"
             type="text"
@@ -28,7 +33,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="password" className="block text-gray-700">Password</label>
+          <label htmlFor="password" className="block text-gray-100 px-2">Password</label>
           <input
             id="password"
             type="password"
@@ -39,7 +44,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
         </div>
         <button
           type="submit"
-          className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 bg-color1 text-white rounded-md hover:bg-color2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Login
         </button>
