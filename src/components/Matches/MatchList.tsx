@@ -26,7 +26,7 @@ const MatchList: React.FC = () => {
         }
       } catch (error) {
         console.error('Error fetching matches:', error);
-        // Handle error (e.g., show error message to user)
+
       }
     };
 
@@ -39,16 +39,15 @@ const MatchList: React.FC = () => {
       if (response.status === 401) {
         throw new Error('Failed to post prediction');
       }
-      // Remove the match from the list after a successful prediction
+
       setMatches((prevMatches) => prevMatches.filter(match => match.id !== prediction.fixture_id));
     } catch (error) {
       console.error('Error posting prediction:', error);
-      // Handle error (e.g., show error message to user)
+
     }
   };
 
   const handlePredictionChange = debounce((fixtureId: number, homeScore: string | null, awayScore: string | null) => {
-    // Validate that both scores are selected
     if (homeScore === null || awayScore === null) return;
 
     const prediction = { fixture_id: fixtureId, home_prediction_score: homeScore, away_prediction_score: awayScore };
@@ -56,7 +55,7 @@ const MatchList: React.FC = () => {
       ...prevPredictions,
       [fixtureId]: prediction,
     }));
-    postPrediction(prediction); // Debounced function to avoid rapid API calls
+    postPrediction(prediction);
   }, 600);
 
   const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>, fixtureId: number, type: 'home' | 'away') => {
@@ -77,7 +76,6 @@ const MatchList: React.FC = () => {
     }
   };
 
-  // Options for score selection (0 to 12)
   const scoreOptions = Array.from({ length: 13 }, (_, i) => i);
   
   return (
