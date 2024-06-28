@@ -1,7 +1,7 @@
-const baseUrl='http://127.0.0.1:8000/api/'
+const baseUrl='https://predictor-backend-omega.vercel.app'
 
 export const loginUser =async(data:UserLogin)=>{
-    const res =await fetch(`${baseUrl}auth/login`,{
+    const res =await fetch(`${baseUrl}/auth/login`,{
         method: "POST", 
         headers: {
           "Content-Type": "application/json",

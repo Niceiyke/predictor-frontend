@@ -18,7 +18,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
     <div className="h-[85vh] p-6 bg-background rounded-lg shadow-md">
 
       <div className='w-full mx-auto'>
-      <img src={logo}/>
+      <img title='logo'src={logo}/>
       </div>
 
       <form onSubmit={handleSubmit}>
